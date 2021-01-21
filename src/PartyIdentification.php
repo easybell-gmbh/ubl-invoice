@@ -8,6 +8,7 @@ use Sabre\Xml\XmlSerializable;
 class PartyIdentification implements XmlSerializable
 {
     private $id;
+    private $schemeID = 'SEPA';
 
     /**
      * @return string
@@ -28,6 +29,24 @@ class PartyIdentification implements XmlSerializable
     }
 
     /**
+     * @return string
+     */
+    public function getSchemeID(): ?string
+    {
+        return $this->schemeID;
+    }
+
+    /**
+     * @param string $schemeID
+     * @return PartyIdentification
+     */
+    public function setSchemeID(?string $schemeID): PartyIdentification
+    {
+        $this->schemeID = $schemeID;
+        return $this;
+    }
+
+    /**
      * The xmlSerialize method is called during xml writing.
      *
      * @param Writer $writer
@@ -35,8 +54,12 @@ class PartyIdentification implements XmlSerializable
      */
     public function xmlSerialize(Writer $writer)
     {
-        if ($this->id !== null) {
-            $writer->write([ Schema::CBC . 'ID' => $this->id ]);
-        }
+        $writer->write([
+            'name' => Schema::CBC . 'ID',
+            'value' => $this->id,
+            'attributes' => [
+                'schemeID' => $this->schemeID
+            ]
+        ]);
     }
 }
