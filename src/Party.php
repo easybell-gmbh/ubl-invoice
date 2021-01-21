@@ -201,16 +201,51 @@ class Party implements XmlSerializable
      */
     public function xmlSerialize(Writer $writer)
     {
-        if ($this->partyIdentification !== null) {
+        if ($this->endpointID !== null && $this->endpointID_schemeID !== null) {
             $writer->write([
-                Schema::CAC . 'PartyIdentification' => $this->partyIdentification
+                [
+                    'name' => Schema::CBC . 'EndpointID',
+                    'value' => $this->endpointID,
+                    'attributes' => [
+                        'schemeID' => is_numeric($this->endpointID_schemeID)
+                            ? sprintf('%04d', +$this->endpointID_schemeID)
+                            : $this->endpointID_schemeID
+                    ]
+                ]
+            ]);
+        }
+
+        if ($this->partyIdentificationId !== null) {
+            $partyIdentificationAttributes = [];
+
+            if (!empty($this->getPartyIdentificationSchemeId())) {
+                $partyIdentificationAttributes['schemeID'] = $this->getPartyIdentificationSchemeId();
+            }
+
+            if (!empty($this->getPartyIdentificationSchemeName())) {
+                $partyIdentificationAttributes['schemeName'] = $this->getPartyIdentificationSchemeName();
+            }
+
+            $writer->write([
+                Schema::CAC . 'PartyIdentification' => [
+                    [
+                        'name' => Schema::CBC . 'ID',
+                        'value' => $this->partyIdentificationId,
+                        'attributes' => $partyIdentificationAttributes
+                    ]
+                ],
+            ]);
+        }
+
+        if ($this->name !== null) {
+            $writer->write([
+                Schema::CAC . 'PartyName' => [
+                    Schema::CBC . 'Name' => $this->name
+                ]
             ]);
         }
 
         $writer->write([
-            Schema::CAC . 'PartyName' => [
-                Schema::CBC . 'Name' => $this->name
-            ],
             Schema::CAC . 'PostalAddress' => $this->postalAddress
         ]);
 
@@ -235,12 +270,6 @@ class Party implements XmlSerializable
         if ($this->contact !== null) {
             $writer->write([
                 Schema::CAC . 'Contact' => $this->contact
-            ]);
-        }
-
-        if ($this->partyIdentification !== null) {
-            $writer->write([
-                Schema::CAC . 'PartyIdentification' => $this->partyIdentification
             ]);
         }
     }
