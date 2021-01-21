@@ -201,6 +201,12 @@ class Party implements XmlSerializable
      */
     public function xmlSerialize(Writer $writer)
     {
+        if ($this->partyIdentification !== null) {
+            $writer->write([
+                Schema::CAC . 'PartyIdentification' => $this->partyIdentification
+            ]);
+        }
+
         $writer->write([
             Schema::CAC . 'PartyName' => [
                 Schema::CBC . 'Name' => $this->name
