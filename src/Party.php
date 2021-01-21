@@ -237,5 +237,11 @@ class Party implements XmlSerializable
                 Schema::CAC . 'Contact' => $this->contact
             ]);
         }
+
+        if ($this->partyIdentification !== null) {
+            $writer->write([
+                Schema::CAC . 'PartyIdentification' => $this->partyIdentification
+            ]);
+        }
     }
 }
