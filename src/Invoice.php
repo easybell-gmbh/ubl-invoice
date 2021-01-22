@@ -15,7 +15,8 @@ class Invoice implements XmlSerializable
     private $id;
     private $copyIndicator;
     private $issueDate;
-    private $invoiceTypeCode = InvoiceTypeCode::INVOICE;
+    private $invoiceTypeCode;
+    private $creditNoteTypeCode;
     private $note;
     private $taxPointDate;
     private $dueDate;
@@ -164,6 +165,25 @@ class Invoice implements XmlSerializable
     public function setInvoiceTypeCode(string $invoiceTypeCode): Invoice
     {
         $this->invoiceTypeCode = $invoiceTypeCode;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCreditNoteTypeCode(): ?string
+    {
+        return $this->creditNoteTypeCode;
+    }
+
+    /**
+     * @param string $creditNoteTypeCode
+     * See also: src/InvoiceTypeCode.php
+     * @return Invoice
+     */
+    public function setCreditNoteTypeCode(string $creditNoteTypeCode): Invoice
+    {
+        $this->creditNoteTypeCode = $creditNoteTypeCode;
         return $this;
     }
 
@@ -507,20 +527,12 @@ class Invoice implements XmlSerializable
             throw new InvalidArgumentException('Invalid invoice issueDate');
         }
 
-        if ($this->invoiceTypeCode === null) {
-            throw new InvalidArgumentException('Missing invoice invoiceTypeCode');
-        }
-
         if ($this->accountingSupplierParty === null) {
             throw new InvalidArgumentException('Missing invoice accountingSupplierParty');
         }
 
         if ($this->accountingCustomerParty === null) {
             throw new InvalidArgumentException('Missing invoice accountingCustomerParty');
-        }
-
-        if ($this->invoiceLines === null) {
-            throw new InvalidArgumentException('Missing invoice lines');
         }
 
         if ($this->legalMonetaryTotal === null) {
@@ -562,6 +574,12 @@ class Invoice implements XmlSerializable
         if ($this->invoiceTypeCode !== null) {
             $writer->write([
                 Schema::CBC . 'InvoiceTypeCode' => $this->invoiceTypeCode
+            ]);
+        }
+
+        if ($this->creditNoteTypeCode !== null) {
+            $writer->write([
+                Schema::CBC . 'CreditNoteTypeCode' => $this->creditNoteTypeCode
             ]);
         }
 
@@ -669,10 +687,12 @@ class Invoice implements XmlSerializable
             Schema::CAC . 'LegalMonetaryTotal' => $this->legalMonetaryTotal
         ]);
 
-        foreach ($this->invoiceLines as $invoiceLine) {
-            $writer->write([
-                Schema::CAC . 'InvoiceLine' => $invoiceLine
-            ]);
+        if ($this->invoiceLines !== null) {
+            foreach ($this->invoiceLines as $invoiceLine) {
+                $writer->write([
+                    Schema::CAC . 'InvoiceLine' => $invoiceLine
+                ]);
+            }
         }
     }
 }
