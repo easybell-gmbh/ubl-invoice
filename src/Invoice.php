@@ -28,6 +28,7 @@ class Invoice implements XmlSerializable
     private $taxTotal;
     private $legalMonetaryTotal;
     private $invoiceLines;
+    private $creditNoteLines;
     private $allowanceCharges;
     private $additionalDocumentReference;
     private $documentCurrencyCode = 'EUR';
@@ -368,6 +369,24 @@ class Invoice implements XmlSerializable
     }
 
     /**
+     * @return CreditNoteLine[]
+     */
+    public function getCreditNoteLines(): ?array
+    {
+        return $this->creditNoteLines;
+    }
+
+    /**
+     * @param CreditNoteLine[] $creditNoteLines
+     * @return Invoice
+     */
+    public function setCreditNoteLines(array $creditNoteLines): Invoice
+    {
+        $this->creditNoteLines = $creditNoteLines;
+        return $this;
+    }
+
+    /**
      * @return AllowanceCharge[]
      */
     public function getAllowanceCharges(): ?array
@@ -691,6 +710,14 @@ class Invoice implements XmlSerializable
             foreach ($this->invoiceLines as $invoiceLine) {
                 $writer->write([
                     Schema::CAC . 'InvoiceLine' => $invoiceLine
+                ]);
+            }
+        }
+
+        if ($this->creditNoteLines !== null) {
+            foreach ($this->creditNoteLines as $creditNoteLine) {
+                $writer->write([
+                    Schema::CAC . 'CreditNoteLine' => $creditNoteLine
                 ]);
             }
         }
