@@ -10,7 +10,7 @@ use InvalidArgumentException;
 
 class Invoice implements XmlSerializable
 {
-    private $UBLVersionID = '2.1';
+    private $UBLVersionID;
     private $customizationID = '1.0';
     private $id;
     private $copyIndicator;
@@ -568,8 +568,13 @@ class Invoice implements XmlSerializable
     {
         $this->validate();
 
+        if ($this->UBLVersionID !== null) {
+            $writer->write([
+                Schema::CBC . 'UBLVersionID' => $this->UBLVersionID,
+            ]);
+        }
+
         $writer->write([
-            Schema::CBC . 'UBLVersionID' => $this->UBLVersionID,
             Schema::CBC . 'CustomizationID' => $this->customizationID,
             Schema::CBC . 'ID' => $this->id
         ]);
