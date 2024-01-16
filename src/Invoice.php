@@ -380,6 +380,24 @@ class Invoice implements XmlSerializable
     }
 
     /**
+     * @return CreditNoteLine[]
+     */
+    public function getCreditNoteLines(): ?array
+    {
+        return $this->creditNoteLines;
+    }
+
+    /**
+     * @param CreditNoteLine[] $creditNoteLines
+     * @return Invoice
+     */
+    public function setCreditNoteLines(array $creditNoteLines): Invoice
+    {
+        $this->creditNoteLines = $creditNoteLines;
+        return $this;
+    }
+
+    /**
      * @return AllowanceCharge[]
      */
     public function getAllowanceCharges(): ?array
