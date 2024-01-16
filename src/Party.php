@@ -199,7 +199,7 @@ class Party implements XmlSerializable
      * @param Writer $writer
      * @return void
      */
-    public function xmlSerialize(Writer $writer)
+    public function xmlSerialize(Writer $writer): void
     {
         if ($this->endpointID !== null && $this->endpointID_schemeID !== null) {
             $writer->write([
