@@ -245,9 +245,11 @@ class Party implements XmlSerializable
             ]);
         }
 
-        $writer->write([
-            Schema::CAC . 'PostalAddress' => $this->postalAddress
-        ]);
+        if ($this->postalAddress !== null) {
+            $writer->write([
+                Schema::CAC . 'PostalAddress' => $this->postalAddress
+            ]);
+        }
 
         if ($this->physicalLocation !== null) {
             $writer->write([
